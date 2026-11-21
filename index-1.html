@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="fi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#241326">
+<title>Päivän panetusmittari 🔥</title>
+<style>
+  :root { color-scheme: dark; --pink:#ff6da8; --cream:#fff4ed; --muted:#d8c6d5; }
+  * { box-sizing:border-box }
+  body {
+    margin:0; min-height:100vh; padding:24px 16px 40px;
+    font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+    color:var(--cream);
+    background:radial-gradient(ellipse at top,#633454 0,#29182e 48%,#15121d 100%);
+    display:flex; justify-content:center;
+  }
+  main { width:min(100%,560px); }
+  .eyebrow { text-align:center; letter-spacing:.16em; text-transform:uppercase; font-size:.72rem; color:#f5b7d1; }
+  h1 { text-align:center; font-size:clamp(2rem,8vw,3rem); line-height:1.04; margin:12px 0; }
+  .intro { text-align:center; color:var(--muted); margin:0 auto 24px; max-width:390px; }
+  .panel { background:#ffffff0d; border:1px solid #ffffff20; border-radius:24px; padding:18px; box-shadow:0 18px 50px #09060d55; }
+  .options { display:grid; gap:10px; }
+  button { font:inherit; cursor:pointer; }
+  .option {
+    display:flex; align-items:center; gap:14px; width:100%; text-align:left;
+    padding:14px; border-radius:16px; color:var(--cream);
+    border:1px solid #ffffff24; background:#ffffff0b; transition:.15s ease;
+  }
+  .option:hover { border-color:#ff9bc1; background:#ff6da81a; transform:translateY(-1px); }
+  .option[aria-pressed="true"] { border:2px solid var(--pink); background:#ff6da826; padding:13px; }
+  .emoji { font-size:1.8rem; width:42px; text-align:center; flex:none; }
+  .label { font-weight:750; display:block; }
+  .desc { display:block; color:var(--muted); font-size:.84rem; margin-top:3px; }
+  .result { display:none; margin-top:18px; padding:18px; border-radius:18px; text-align:center; background:#ff6da81c; border:1px solid #ff6da866; }
+  .result.show { display:block; }
+  .result .big { font-size:2.6rem; }
+  .result h2 { margin:5px 0 8px; font-size:1.35rem; }
+  .result p { color:var(--muted); margin:0 0 15px; }
+  .actions { display:flex; flex-wrap:wrap; gap:9px; justify-content:center; }
+  .action { border:0; border-radius:999px; padding:11px 16px; font-weight:700; background:var(--pink); color:#241326; }
+  .action.secondary { background:#ffffff16; color:var(--cream); border:1px solid #ffffff30; }
+  .hint { text-align:center; color:#cbb8c9; font-size:.78rem; margin:18px 6px 0; }
+  footer { text-align:center; color:#bdaabb; font-size:.76rem; margin-top:20px; }
+</style>
+</head>
+<body>
+<main>
+  <div class="eyebrow">Päivän tärkein tilannepäivitys</div>
+  <h1>🔥 Panetusmittari 🔥</h1>
+  <p class="intro">Valitse tämänhetkinen fiilis. Rehellisyys on tässä pelissä valttia. 😈</p>
+  <section class="panel" aria-label="Valitse päivän fiilis">
+    <div class="options" id="options">
+      <button class="option" data-title="Panettaa PALJON" data-desc="Nyt olisi syytä tehdä asialle jotain." data-emoji="🔥" aria-pressed="false">
+        <span class="emoji">🔥</span><span><span class="label">Panettaa PALJON</span><span class="desc">Nyt olisi syytä tehdä asialle jotain.</span></span>
+      </button>
+      <button class="option" data-title="Panettaa vähän" data-desc="Pientä kutinaa ilmassa." data-emoji="😉" aria-pressed="false">
+        <span class="emoji">😉</span><span><span class="label">Panettaa vähän</span><span class="desc">Pientä kutinaa ilmassa.</span></span>
+      </button>
+      <button class="option" data-title="Älä edes yritä" data-desc="Ei mitään mahdollisuuksia tänään." data-emoji="🚫" aria-pressed="false">
+        <span class="emoji">🚫</span><span><span class="label">Älä edes yritä</span><span class="desc">Ei mitään mahdollisuuksia tänään.</span></span>
+      </button>
+      <button class="option" data-title="PANOTREFFIT" data-desc="Nyt ei puhuta, vaan sovitaan aika ja paikka." data-emoji="😈" aria-pressed="false">
+        <span class="emoji">😈</span><span><span class="label">PANOTREFFIT</span><span class="desc">Nyt ei puhuta, vaan sovitaan aika ja paikka.</span></span>
+      </button>
+      <button class="option" data-title="Väsyttää, taidan mennä nukkumaan" data-desc="Tänään ei jaksa edes panettaa." data-emoji="🥱" aria-pressed="false">
+        <span class="emoji">🥱</span><span><span class="label">Väsyttää, taidan mennä nukkumaan</span><span class="desc">Tänään ei jaksa edes panettaa.</span></span>
+      </button>
+      <button class="option" data-title="Lypsyrobotilla on ikävä" data-desc="Navetalle kutsuu, eikä sille voi sanoa ei." data-emoji="🐄" aria-pressed="false">
+        <span class="emoji">🐄</span><span><span class="label">Lypsyrobotilla on ikävä</span><span class="desc">Navetalle kutsuu, eikä sille voi sanoa ei.</span></span>
+      </button>
+    </div>
+    <div class="result" id="result" aria-live="polite">
+      <div class="big" id="resultEmoji">🔥</div>
+      <h2 id="resultTitle">Valintasi</h2>
+      <p id="resultDesc"></p>
+      <div class="actions">
+        <button class="action" id="share">Jaa vastaus</button>
+        <button class="action secondary" id="copy">Kopioi vastaus</button>
+      </div>
+    </div>
+  </section>
+  <p class="hint">Valitse yksi vaihtoehto ja paljasta päivän tunnelma. Ei selittelyjä eikä painostamista. 😉</p>
+  <footer>Panetusmittari™ · Päivän fiilis, ilman turhia puheita</footer>
+</main>
+<script>
+  const buttons = [...document.querySelectorAll('.option')];
+  const result = document.getElementById('result');
+  let selected = null;
+  const answerText = () => selected ? `${selected.emoji} ${selected.title}` : '';
+  buttons.forEach(button => button.addEventListener('click', () => {
+    buttons.forEach(b => b.setAttribute('aria-pressed', String(b === button)));
+    selected = { title: button.dataset.title, desc: button.dataset.desc, emoji: button.dataset.emoji };
+    document.getElementById('resultEmoji').textContent = selected.emoji;
+    document.getElementById('resultTitle').textContent = selected.title;
+    document.getElementById('resultDesc').textContent = selected.desc;
+    result.classList.add('show');
+  }));
+  document.getElementById('copy').addEventListener('click', async () => {
+    const text = answerText();
+    try { await navigator.clipboard.writeText(text); alert('Vastaus kopioitu!'); }
+    catch { window.prompt('Kopioi vastauksesi:', text); }
+  });
+  document.getElementById('share').addEventListener('click', async () => {
+    const text = `Päivän panetusmittari: ${answerText()}`;
+    if (navigator.share) {
+      try { await navigator.share({ title:'Päivän panetusmittari', text }); } catch(e) {}
+    } else {
+      try { await navigator.clipboard.writeText(text); alert('Vastaus kopioitu – liitä se viestiin!'); }
+      catch { window.prompt('Kopioi ja lähetä:', text); }
+    }
+  });
+</script>
+</body>
+</html>
